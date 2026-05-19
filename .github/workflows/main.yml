@@ -48,20 +48,15 @@ jobs:
 
       - name: Create IPA
         run: |
-          mkdir -p Payload
           APP_PATH="build/Build/Products/Release-iphoneos/AptumDashboard.app"
 
           test -d "$APP_PATH"
 
-          ls -la "$APP_PATH"
+          mkdir Payload
 
-          plutil -p "$APP_PATH/Info.plist" || true
+          cp -R "$APP_PATH" Payload/AptumDashboard.app
 
-          cp -R "$APP_PATH" Payload/
-
-          cd Payload
-          zip -r ../AptumDashboard.ipa .
-          cd ..
+          /usr/bin/zip -r AptumDashboard.ipa Payload
 
           ls -lh AptumDashboard.ipa
 
