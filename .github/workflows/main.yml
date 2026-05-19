@@ -19,9 +19,9 @@ jobs:
       - name: Clean generated files
         run: |
           rm -rf AptumDashboard.xcodeproj
-          rm -rf DunenDashboard.xcodeproj
-          rm -rf build Payload
-          rm -f AptumDashboard.ipa DunenDashboard.ipa
+          rm -rf build
+          rm -rf Payload
+          rm -f AptumDashboard.ipa
 
       - name: Install XcodeGen
         run: brew install xcodegen
@@ -43,17 +43,27 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
+            IPHONEOS_DEPLOYMENT_TARGET=16.2 \
             -derivedDataPath build
 
-           - name: Create IPA
+      - name: Create IPA
         run: |
           mkdir -p Payload
           APP_PATH="build/Build/Products/Release-iphoneos/AptumDashboard.app"
+
           test -d "$APP_PATH"
+
           ls -la "$APP_PATH"
+
           plutil -p "$APP_PATH/Info.plist" || true
+
           cp -R "$APP_PATH" Payload/
-          zip -r AptumDashboard.ipa Payload
+
+          cd Payload
+          zip -r ../AptumDashboard.ipa .
+          cd ..
+
+          ls -lh AptumDashboard.ipa
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
